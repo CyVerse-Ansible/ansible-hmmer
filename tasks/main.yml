@@ -1,0 +1,39 @@
+---
+
+- name: Download HMMER source
+  get_url:
+    url: "{{ HMMER_URL }}"
+    dest: "/tmp/hmmer-3.1b2.tar.gz"
+
+- name: Unpack source code
+  unarchive:
+    src: "/tmp/hmmer-3.1b2.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Configure HMMER
+  command: ./configure
+  args:
+    chdir: "/tmp/hmmer-3.1b2"
+
+- name: Build HMMER
+  make:
+    chdir: "/tmp/hmmer-3.1b2"
+
+- name: Check HMMER
+  make:
+    chdir: "/tmp/hmmer-3.1b2"
+    target: check
+
+- name: Install HMMER
+  make:
+    chdir: "/tmp/hmmer-3.1b2"
+    target: install
+
+- name: Cleanup
+  file:
+    state: absent
+    path: "{{ item }}"
+  with_items:
+    - "/tmp/hmmer-3.1b2.tar.gz"
+    - "/tmp/hmmer-3.1b2"
